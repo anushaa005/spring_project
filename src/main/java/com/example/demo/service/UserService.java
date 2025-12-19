@@ -20,7 +20,7 @@ public class UserService {
     User user;
 
     public UserDto Login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()->new RuntimeException("unable to signup"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Unregisterd User"));
         return new UserDto(user.getId(), user.getName(), user.getEmail());
 
 
@@ -28,22 +28,24 @@ public class UserService {
 
 
     public UserDto SignUp(SignupRequest request) {
-//        Optional<User> userContainer = userRepository.findByEmail(request.getEmail());
-//        if (userContainer.isPresent())
-//        {
-//            return null;
-//
-//        } else {
-//            User user = new User(request.getName(), request.getEmail(), request.getPassword());
-//            userRepository.save(user);
-//            return new UserDto(user.getId(), user.getName(), user.getEmail());
-      //  }
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        User savedUser = userRepository.save(user);
-        return new UserDto(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
+        Optional<User> userContainer = userRepository.findByEmail(request.getEmail());
+        if (userContainer.isPresent()) {
+            throw new RuntimeException("User Already Present, please LOGIN");
 
+        } else {
+            User user = new User();
+            user.setName(request.getName());
+            user.setEmail(request.getEmail());
+            user.setPassword(request.getPassword());
+            User savedUser = userRepository.save(user);
+            return new UserDto(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
+        }
     }
 }
+      //  }
+       // User user = new User();
+       // user.setName(request.getName());
+      //  user.setEmail(request.getEmail());
+      //  user.setPassword(request.getPassword());
+       // User savedUser = userRepository.save(user);
+      //  return new UserDto(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
