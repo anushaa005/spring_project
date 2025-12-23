@@ -3,8 +3,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import javax.management.relation.Role;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -28,10 +31,8 @@ public class User
     @Column(nullable = false)
     private Role role;
 
-    public enum Role
-    {
-        JOBSEEKER, EMPLOYER
-    }
+    private LocalDateTime createdAt;
+
 
 
 }

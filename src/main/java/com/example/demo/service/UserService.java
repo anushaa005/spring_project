@@ -2,55 +2,51 @@ package com.example.demo.service;
 
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.SignupRequest;
-import com.example.demo.dto.UserDto;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
 @Service
-public class UserService {
-    @Autowired
-    UserRepository userRepository;
-    User user;
+@RequiredArgsConstructor
+public class UserService
+{
 
-    public UserDto Login(LoginRequest request) {
-        User user;
-        Optional<User> userContainer = userRepository.findByEmail(request.getEmail());
-        if(userContainer.isPresent())
-        {
-            user = userContainer.get();
-            return new UserDto(user.getId(), user.getName(), user.getEmail());
-        }
-        else
-        {
-            return null;
-        }
+    private final UserRepository userRepository;
 
+
+    public ApiResponse<Void> Login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(()-> new RuntimeException("User not found for that emial"));
+        if (!user.getPassword().equals(request.getPassword())){
+            throw new RuntimeException("Password incorrect");
+        }
+        return ApiResponse.success("Login successful", null);
 
 
     }
 
 
-    public UserDto SignUp(SignupRequest request) {
-        Optional<User> userContainer = userRepository.findByEmail(request.getEmail());
-        if (userContainer.isPresent()) {
-            return null;
+    public ApiResponse<Void> SignUp(SignupRequest request) {
+        if(userRepository.existsByEmail(request.getEmail())){
+            throw new RuntimeException("User Already registered at this email");
+        }
 
-        } else {
             User user = new User();
             user.setName(request.getName());
             user.setEmail(request.getEmail());
             user.setPassword(request.getPassword());
             user.setRole(request.getRole());
+            user.setCreatedAt(LocalDateTime.now());
             User savedUser = userRepository.save(user);
-            return new UserDto(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
+            return ApiResponse.success("Signup successful", null);
         }
     }
-}
 
