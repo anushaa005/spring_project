@@ -21,13 +21,13 @@ public class JobApplication
 
     @ManyToOne
     @JoinColumn(
-        name = "job_id",
+        name = "jobId",
         nullable = false)
     private Job job;
 
     @ManyToOne
     @JoinColumn(
-            name = "user_id",
+            name = "userId",
             nullable = false)
     private User user;
     @Enumerated(EnumType.STRING)

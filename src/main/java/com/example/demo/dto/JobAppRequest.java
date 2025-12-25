@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class JobAppRequest
 {
-    private int job_id;
-    private int user_id;
+    private int jobId;
+    private int userId;
 }
